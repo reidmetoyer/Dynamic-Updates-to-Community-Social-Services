@@ -9,8 +9,16 @@ import json
 import ast
 import re
 
+#what things on the our lady of the road and center for the homeless qualify as "events"? (so i can test on those sites)
 
-
+"""instructions: Please take the supplied html file and return a string in the 
+structure of a python dictionary of events that show up on the page. This dictionary 
+should contain ALL events, past, present, and future. Return the events as a python 
+dictionary with the events as the keys, and the value of each event being another dictionary 
+of event details, including the date of the event, description, and an 'outdated' key, which 
+should automatically be set to 'tbd'. Return the date in 'month year' format, for example, 'November 2023'. If there is no date,
+make the date 'tbd', if there is only a month and no year, automatically make the year the current year in time.
+REturn the dictionary as a string, NOT a code block, and DO NOT RESPOND WITH ANY TEXT OTHER THAN THE DICTIONARY."""
 
 
 def extract_events():
@@ -19,15 +27,15 @@ def extract_events():
     client = OpenAI()
     assistant = client.beta.assistants.create(
         name="Event Extraction Assistant",
-        instructions="Please take the supplied html file and return a string in the structure of a python python dictionary, but not a literal code block, of events run by this organization. Return the events as a python dictionary with the events as the keys, and the values being dictionaries of the event details, such as date, description, and an 'outdated' event which should automatically be set to 'tbd'.",
+        instructions="""Take the supplied pdf file(s) and use computer vision to observe them and organize all events that are present in the files; past present and future. Return the events as a STRING with the structure of a python dictionary; do NOT return a code block. The keys should be the event title, and the value associated with each title should be another dictionary of event details, with the date, description, and an 'outdated' tag which should be set to 'tbd'. Always make the date be in 'month year' format, such as 'November 2024', and do not have the day in the date. If there is no information on the date, mark it as 'tbd', and if there is a month but no year, put the current year as the year. Do not return ANY information other than this dictionary.""",
         model="gpt-4o",
         tools=[{"type": "file_search"}],
     )
 
-    vector_store = client.beta.vector_stores.create(name="Events HTML File")
+    vector_store = client.beta.vector_stores.create(name="Events PDF File(s)")
 
 
-    file_paths = ["SMH_page.html"]
+    file_paths = ["SMH_page.pdf"]
     file_streams = [open(path, "rb") for path in file_paths]
 
 
@@ -47,14 +55,14 @@ def extract_events():
 
 
     message_file = client.files.create(
-        file=open("SMH_page.html", "rb"), purpose="assistants"
+        file=open("SMH_page.pdf", "rb"), purpose="assistants"
     )
 
     thread = client.beta.threads.create(
         messages=[
             {
                 "role": "user",
-                "content": "Please take the supplied html file and return a string in the structure of a python dictionary, but not a literal code block, of events run by this organization. Return the events as a python dictionary with the events as the keys, and the values being dictionaries of the event details, such as date, description, and an 'outdated' event which should automatically be set to 'tbd'. DO NOT RESPOND WITH ANY TEXT APART FROM THE PYTHON DICTIONARY",
+                "content": """Take the supplied pdf file(s) and use computer vision to observe them and organize all events that are present in the files; past present and future. Return the events as a STRING with the structure of a python dictionary; do NOT return a code block. The keys should be the event title, and the value associated with each title should be another dictionary of event details, with the date, description, and an 'outdated' tag which should be set to 'tbd'. Always make the date be in 'month year' format, such as 'November 2024', and do not have the day in the date. If there is no information on the date, mark it as 'tbd', and if there is a month but no year, put the current year as the year. Do not return ANY information other than this dictionary.""",
                 "attachments": [
                     {"file_id": message_file.id, "tools": [{"type": "file_search"}]}
                 ]
@@ -113,7 +121,7 @@ def extract_events():
     
     #match = re.search(r'\{.*\}', return_str)
     #dict_str = match.group(0)
-    return_dict = json.loads(return_str)
+    return_dict = ast.literal_eval(return_str)
     
                                 
 
@@ -121,9 +129,12 @@ def extract_events():
     #print("python dict using json loads:", return_dict)
  
 
-    return return_str
+    return return_dict
 if __name__ == "__main__":
     print("testing main")
     # Test the function directly in this module
     events = extract_events()
     print(events)
+    print("\n\n")
+    for element in events:
+        print(element)

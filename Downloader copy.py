@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 from typing_extensions import override
-from eventextraction import extract_events
+
 
 
 
@@ -39,7 +39,8 @@ def download_webpage(url, file_path):
         print(f"Failed to download the webpage: {e}")
 
     
-
+def pdf_download(url, file_path):
+    print("todo")
 
 
 
@@ -88,8 +89,8 @@ def date_logic(events):
             else:
                 details['status'] = 'upcoming event'
 
-events = extract_events()
-print(events)
+
+
 
 
 def construct_email(events):

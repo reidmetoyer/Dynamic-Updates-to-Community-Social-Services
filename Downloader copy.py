@@ -13,7 +13,8 @@ from pathlib import Path
 from typing_extensions import override
 
 
-
+#This and eventextraction copy can be used for organizing events in the google drive
+#the email notification program is located in 
 
 
 env_path = Path('.') / '.env'

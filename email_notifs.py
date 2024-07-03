@@ -5,44 +5,147 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 import pdfkit
+import PyPDF2
+from info_extract import extract_info
+import ssl
+import smtplib
+
 
 path_to_wkhtmltopdf = '/usr/local/bin/wkhtmltopdf'
 config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
+options = {
+    'disable-javascript': '',
+    'javascript-delay': 5000,
+    'no-stop-slow-scripts': ''
+}
+
+
 
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 client = OpenAI()
 
-#main function to notify smh
+sender = "rmetoye2@nd.edu"
+recipient = "reid.metoyer@gmail.com"
+email_password = "bofw ucqi mvis sskp"
+
+#ST MARGARET's HOUSE
 def notif_smh():
     #smh-specific variables
-    recipient = ""
+    org = "SMH"
+    #recipient = ""
     urls = ["https://stmargaretshouse.org/contact-us/"]
     file_paths = ["file1.pdf"]
 
     #notification logic
-    pdfs = pdf_download(urls, file_paths)
-    info = get_info(pdfs)
-    send_email(recipient, info)
-
-
     print("notifying st margarets house")
+    output_pdf = "merged_output.pdf"
+    pdf_download(urls, file_paths, output_pdf)
+    info = get_info(output_pdf)
+    send_email(org, recipient, info)
+    file_paths.append(output_pdf)
+    delete_pdfs(file_paths)
+
+
+#OUR LADY OF THE ROAD
+def notif_olotr():
+    #olotr-specific variables
+    org = "OLOTR"
+    #recipient = ""
+    urls = ["https://www.olrsb.org/get-involved"]
+    file_paths = ["file1.pdf"]
+
+    
+    #notification logic
+    print("notifying our lady of the road")
+    output_pdf = "merged_output.pdf"
+    pdf_download(urls, file_paths, output_pdf)
+    info = get_info(output_pdf)
+    send_email(org, recipient, info)
+    file_paths.append(output_pdf)
+    delete_pdfs(file_paths)
+
+
+# CENTER FOR THE HOMELESS
+def notif_cfth():
+    #smh-specific variables
+    org = "CFTH"
+    #recipient = ""
+    urls = ["https://www.cfh.net/contact"]
+    file_paths = ["file1.pdf"]
+
+    
+    #notification logic
+    print("notifying center for the homeless")
+    output_pdf = "merged_output.pdf"
+    pdf_download(urls, file_paths, output_pdf)
+    info = get_info(output_pdf)
+    send_email(org, recipient, info)
+    file_paths.append(output_pdf)
+    delete_pdfs(file_paths)
+    
 
 #helper function to download necessary pdfs
-def pdf_download(urls, file_paths):
+def pdf_download(urls, file_paths, output_path):
+    #download files
     for file, url in zip(file_paths, urls):
-        pdfkit.from_url(url, file, configuration=config)
-    return file_paths
+        pdfkit.from_url(url, file, configuration=config, options=options)
+
+    #merge files
+    pdf_merger = PyPDF2.PdfMerger()
+
+    for pdf in file_paths:
+        pdf_merger.append(pdf)
+
+    with open(output_path, 'wb') as output_file:
+        pdf_merger.write(output_file)
+
 
 #helper function to extract info using chatgpt
 def get_info(pdfs):
-    info = []
+    info = extract_info()
     print("getting info")
     return info
 
 #helper function to construct and send email to target organization
-def send_email(recipient, info):
+def send_email(org, recipient, info):
     print("constructing email")
+    
+    #subject = org + " Website Info Check-In"
+    body = "Here's your regularly scheduled website information check-in. Take a look at what we've identified on your website, and make sure all the information is correct. If it's not, make note of it and try to fix it as soon as you can!\n\n"
+
+    for item in info:
+        body += item + ": " + info[item] + "\n"
+
+    msg = EmailMessage()
+    msg['From'] = sender
+    msg['To'] = recipient
+    msg['Subject'] = "Website Info Check-In"
+    msg.set_content(body)
+    context = ssl.create_default_context()
+
+
     print("sending email")
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+        smtp.login(sender, email_password)
+        smtp.sendmail(sender, recipient, msg.as_string())
+
+    print(body)
+
+def delete_pdfs(file_paths):
+    current_dir = os.getcwd()
+    for file in file_paths:
+        file_path = os.path.join(current_dir, file)
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"Deleted {file}")
+            else:
+                print(f"File {file} does not exist")
+        except Exception as e:
+            print(f"Error deleting {file}: {e}")
+
 
 notif_smh()
+notif_olotr()
+notif_cfth()

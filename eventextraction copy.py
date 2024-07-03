@@ -11,14 +11,7 @@ import re
 
 #what things on the our lady of the road and center for the homeless qualify as "events"? (so i can test on those sites)
 
-"""instructions: Please take the supplied html file and return a string in the 
-structure of a python dictionary of events that show up on the page. This dictionary 
-should contain ALL events, past, present, and future. Return the events as a python 
-dictionary with the events as the keys, and the value of each event being another dictionary 
-of event details, including the date of the event, description, and an 'outdated' key, which 
-should automatically be set to 'tbd'. Return the date in 'month year' format, for example, 'November 2023'. If there is no date,
-make the date 'tbd', if there is only a month and no year, automatically make the year the current year in time.
-REturn the dictionary as a string, NOT a code block, and DO NOT RESPOND WITH ANY TEXT OTHER THAN THE DICTIONARY."""
+"""Please use the provided pdf file and return a string in the structure of a python dictionary of information from the page. Information to look for includes phone number, email, address, any social media handles, and if applicable, what hours the organization is open. For instance a sample dictionary would look like this: {phone: 111-111-1111, email: happy@gmail.com, address: 2000 White Dragon Ave, New York City, NY 10027, facebook: facebook.com/stmargaretshouse1, open-hours: 10am-4pm}. Return this dictionary as a string, NOT a code block. Do not include any other text in the response other than the dictionary. """
 
 
 def extract_events():
@@ -27,7 +20,7 @@ def extract_events():
     client = OpenAI()
     assistant = client.beta.assistants.create(
         name="Event Extraction Assistant",
-        instructions="""Take the supplied pdf file(s) and use computer vision to observe them and organize all events that are present in the files; past present and future. Return the events as a STRING with the structure of a python dictionary; do NOT return a code block. The keys should be the event title, and the value associated with each title should be another dictionary of event details, with the date, description, and an 'outdated' tag which should be set to 'tbd'. Always make the date be in 'month year' format, such as 'November 2024', and do not have the day in the date. If there is no information on the date, mark it as 'tbd', and if there is a month but no year, put the current year as the year. Do not return ANY information other than this dictionary.""",
+        instructions="""Please use the provided pdf file and return a string in the structure of a python dictionary of information from the page. Information to look for includes phone number, email, address, any social media handles, and if applicable, what hours the organization is open. For instance a sample dictionary would look like this: {phone: 111-111-1111, email: happy@gmail.com, address: 2000 White Dragon Ave, New York City, NY 10027, facebook: facebook.com/stmargaretshouse1, open-hours: 10am-4pm}. Return this dictionary as a string, NOT a code block. Do not include any other text in the response other than the dictionary. """,
         model="gpt-4o",
         tools=[{"type": "file_search"}],
     )

@@ -11,7 +11,7 @@ import re
 
 
 
-"""Please use the provided pdf file and return a string in the structure of a python dictionary of information from the page. Information to look for includes phone number, email, address, any social media handles, and if applicable, what hours the organization is open. For instance a sample dictionary would look like this: {phone: 111-111-1111, email: happy@gmail.com, address: 2000 White Dragon Ave, New York City, NY 10027, facebook: facebook.com/stmargaretshouse1, open-hours: 10am-4pm}. Return this dictionary as a string, NOT a code block. Do not include any other text in the response other than the dictionary."""
+instructions = """Please use the provided pdf file and return a string in the structure of a python dictionary of information from the page. Information to look for includes phone number, email, address, any social media handles, hours of operation, and upcoming events. ONLY upcoming events should be noted, aka events under the 'EVENTS' header, not any events under the 'PAST EVENTS' header, and should be stored as a list. If it is unclear whether an event is upcoming or has passed, DO NOT take note of it. For instance a sample dictionary would look like this: {phone: 111-111-1111, email: happy@gmail.com, address: 2000 White Dragon Ave, New York City, NY 10027, facebook: facebook.com/stmargaretshouse1, events: [Winter Walk, Artbeat] hours of operation: 10am-4pm}. Return this dictionary as a string, NOT a code block. Do not include any other text in the response other than the dictionary."""
 
 
 def extract_info():
@@ -20,7 +20,7 @@ def extract_info():
     client = OpenAI()
     assistant = client.beta.assistants.create(
         name="Information Extraction Assistant",
-        instructions="""Please use the provided pdf file and return a string in the structure of a python dictionary of information from the page. Information to look for includes phone number, email, address, any social media handles, and if applicable, what hours the organization is open. For instance a sample dictionary would look like this: {phone: 111-111-1111, email: happy@gmail.com, address: 2000 White Dragon Ave, New York City, NY 10027, facebook: facebook.com/stmargaretshouse1, open-hours: 10am-4pm}. Return this dictionary as a string, NOT a code block. Do not include any other text in the response other than the dictionary.""",
+        instructions=instructions,
         model="gpt-4o",
         tools=[{"type": "file_search"}],
     )
@@ -55,7 +55,7 @@ def extract_info():
         messages=[
             {
                 "role": "user",
-                "content": """Please use the provided pdf file and return a string in the structure of a python dictionary of information from the page. Information to look for includes phone number, email, address, any social media handles, and if applicable, what hours the organization is open. For instance a sample dictionary would look like this: {phone: 111-111-1111, email: happy@gmail.com, address: 2000 White Dragon Ave, New York City, NY 10027, facebook: facebook.com/stmargaretshouse1, open-hours: 10am-4pm}. Return this dictionary as a string, NOT a code block. Do not include any other text in the response other than the dictionary.""",
+                "content": instructions,
                 "attachments": [
                     {"file_id": message_file.id, "tools": [{"type": "file_search"}]}
                 ]

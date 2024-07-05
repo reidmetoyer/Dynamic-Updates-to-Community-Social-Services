@@ -34,8 +34,8 @@ def notif_smh():
     #smh-specific variables
     org = "SMH"
     #recipient = ""
-    urls = ["https://stmargaretshouse.org/contact-us/"]
-    file_paths = ["file1.pdf"]
+    urls = ["https://stmargaretshouse.org/contact-us/", "https://stmargaretshouse.org/events/"]
+    file_paths = ["file1.pdf", "file2.pdf"]
 
     #notification logic
     print("notifying st margarets house")
@@ -44,7 +44,7 @@ def notif_smh():
     info = get_info(output_pdf)
     send_email(org, recipient, info)
     file_paths.append(output_pdf)
-    delete_pdfs(file_paths)
+    #delete_pdfs(file_paths)
 
 
 #OUR LADY OF THE ROAD
@@ -110,12 +110,27 @@ def get_info(pdfs):
 #helper function to construct and send email to target organization
 def send_email(org, recipient, info):
     print("constructing email")
-    
+    print(info)
     #subject = org + " Website Info Check-In"
     body = "Here's your regularly scheduled website information check-in. Take a look at what we've identified on your website, and make sure all the information is correct. If it's not, make note of it and try to fix it as soon as you can!\n\n"
 
     for item in info:
-        body += item + ": " + info[item] + "\n"
+        if item == "events":
+            body += "\nYour website lists "
+            for event in info[item]:
+                body += event + ", " 
+            body += "as upcoming. Is this correct? Yes/No\n"
+            body += "-------------------\n\n"
+        elif item == "hours of operation":
+            body += "Your hours of operation are " + info[item] + ". Is this correct? Yes/No\n"
+            body += "-------------------\n"
+        else:
+            body += "Your " + item + " is " + info[item] + ". Is this correct? Yes/No\n"
+            body += "-------------------\n"
+
+
+
+
 
     msg = EmailMessage()
     msg['From'] = sender
@@ -147,5 +162,5 @@ def delete_pdfs(file_paths):
 
 
 notif_smh()
-notif_olotr()
-notif_cfth()
+#notif_olotr()
+#notif_cfth()

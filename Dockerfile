@@ -6,8 +6,6 @@ WORKDIR /app
 
 #copy directory contents into /app container
 COPY . /app
-#copy creds file separately
-COPY credentials.json /app/credentials.json
 
 #upgrade pip
 RUN pip install --upgrade pip

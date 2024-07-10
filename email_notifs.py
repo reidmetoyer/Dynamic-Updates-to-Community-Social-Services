@@ -9,6 +9,12 @@ import PyPDF2
 from info_extract import extract_info
 import ssl
 import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from flask import Flask, request
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
 
 
 path_to_wkhtmltopdf = '/usr/local/bin/wkhtmltopdf'
@@ -28,6 +34,13 @@ client = OpenAI()
 sender = "rmetoye2@nd.edu"
 recipient = "reid.metoyer@gmail.com"
 email_password = "bofw ucqi mvis sskp"
+
+app = Flask(__name__)
+
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+creds = ServiceAccountCredentials.from_json_keyfile_name("/Users/reidmetoyer/Downloads/credentials.json", scope)
+client = gspread.authorize(creds)
+sheet = client.open("Responses").sheet1
 
 #ST MARGARET's HOUSE
 def notif_smh():
@@ -131,21 +144,38 @@ def send_email(org, recipient, info):
 
 
 
-
-    msg = EmailMessage()
+    body = """\
+    <html>
+      <body>
+        <p>Is this information up to date?<br>
+           <a href="https://silent-ears-wish.loca.lt/response?answer=yes">Yes</a><br>
+           <a href="https://silent-ears-wish.loca.lt/response?answer=no">No</a>
+        </p>
+      </body>
+    </html>
+    """
+    msg = MIMEMultipart()
     msg['From'] = sender
     msg['To'] = recipient
     msg['Subject'] = "Website Info Check-In"
-    msg.set_content(body)
+    msg.attach(MIMEText(body, 'html'))
+   #msg.set_content(body)
     context = ssl.create_default_context()
 
 
     print("sending email")
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-        smtp.login(sender, email_password)
-        smtp.sendmail(sender, recipient, msg.as_string())
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.starttls()
+        server.login(sender, email_password)
+        server.sendmail(sender, recipient, msg.as_string())
 
     print(body)
+
+def response():
+    answer = request.args.get('answer')
+    sheet.append_row([answer])
+    return "Thank you for your response!"
+
 
 def delete_pdfs(file_paths):
     current_dir = os.getcwd()
@@ -160,7 +190,11 @@ def delete_pdfs(file_paths):
         except Exception as e:
             print(f"Error deleting {file}: {e}")
 
-
 notif_smh()
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=7030)
+
+
 #notif_olotr()
 #notif_cfth()

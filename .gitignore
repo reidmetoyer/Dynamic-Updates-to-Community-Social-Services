@@ -1,1 +1,24 @@
-*.envcredentials.json
+#ignore python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+#ignore env variables
+.env
+
+#ignore creds
+credentials.json
+
+#ignore virtual env directories
+env/
+venv/
+
+#ignore logs
+*.log
+
+#os-specific files
+.DS_Store
+
+#docker-related files
+docker-compose.yml
+docker-compose.override.yml

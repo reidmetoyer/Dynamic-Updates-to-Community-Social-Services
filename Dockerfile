@@ -8,6 +8,7 @@ WORKDIR /app
 COPY . /app
 
 #install any packages in requirements.txt
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 #make port 8080 available

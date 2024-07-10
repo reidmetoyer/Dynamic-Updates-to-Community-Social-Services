@@ -16,5 +16,7 @@ EXPOSE 8080
 #define environment variable
 ENV PORT 8080
 
+RUN echo "environment variables: " &&printenv
+
 #run app.py when container launches
 CMD ["python", "app.py"]

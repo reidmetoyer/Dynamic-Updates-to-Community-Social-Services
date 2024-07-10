@@ -8,14 +8,13 @@ WORKDIR /app
 COPY . /app
 
 #install any packages in requirements.txt
-RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 #make port 8080 available
 EXPOSE 8080
 
 #define environment variable
-ENV PORT=8080
+ENV PORT 8080
 
 #run app.py when container launches
 CMD ["python", "app.py"]

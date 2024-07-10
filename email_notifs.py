@@ -35,12 +35,11 @@ sender = "rmetoye2@nd.edu"
 recipient = "reid.metoyer@gmail.com"
 email_password = "bofw ucqi mvis sskp"
 
-app = Flask(__name__)
 
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("/Users/reidmetoyer/Downloads/credentials.json", scope)
-client = gspread.authorize(creds)
-sheet = client.open("Responses").sheet1
+
+
+spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
+sheet = client.open_by_key(spreadsheet_key).sheet1
 
 #ST MARGARET's HOUSE
 def notif_smh():
@@ -191,10 +190,5 @@ def delete_pdfs(file_paths):
             print(f"Error deleting {file}: {e}")
 
 notif_smh()
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=7030)
-
-
 #notif_olotr()
 #notif_cfth()

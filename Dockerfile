@@ -11,8 +11,6 @@ WORKDIR /app
 #env variables
 ENV GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
 
-RUN chmod 644 /app/credentials.json
-
 #upgrade pip
 RUN pip install --upgrade pip
 #install any packages in requirements.txt

@@ -2,7 +2,7 @@ Flask
 gspread
 oauth2client
 python-dotenv
-google-cloud-secretmanager
+google-cloud-secret-manager
 google-auth
 google-auth-httplib2
 google-api-python-client

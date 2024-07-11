@@ -1,11 +1,15 @@
 #python language
 FROM python:3.12-slim
 
+#copy directory contents into /app container
+COPY . /app
+
+
 #working directory
 WORKDIR /app
 
-#copy directory contents into /app container
-COPY . /app
+
+
 
 # Copy the credentials file separately
 COPY credentials.json /app/credentials.json
@@ -22,7 +26,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 8080
 
 #define environment variable
-ENV PORT 8080
+ENV PORT=8080
 
 RUN echo "environment variables: " &&printenv
 

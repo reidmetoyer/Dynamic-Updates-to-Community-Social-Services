@@ -9,11 +9,12 @@ load_dotenv()
 app = Flask(__name__)
 
 # Google Sheets setup
-creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "/app/credentials.json")
 print(creds_path)
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name(creds_path, scope)
 client = gspread.authorize(creds)
+print(creds)
 
 # Access the spreadsheet by key
 spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"

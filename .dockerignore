@@ -1,0 +1,16 @@
+#ignore python bytecode
+__pycache__/
+*.py[cod]
+
+#ignore venv directories
+env/
+venv/
+
+#ignore logs
+*.log
+
+#ignore os-specific files
+.DS_Store
+
+#explicitly include credentials.json
+!credentials.json

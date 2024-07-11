@@ -22,6 +22,7 @@ EXPOSE 8080
 #define environment variable
 ENV PORT=8080
 ENV GOOGLE_CLOUD_PROJECT=nomadic-botany-429015-v7
+ENV GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
 
 
 #run app.py when container launches

@@ -147,8 +147,8 @@ def send_email(org, recipient, info):
     <html>
       <body>
         <p>Is this information up to date?<br>
-           <a href="https://silent-ears-wish.loca.lt/response?answer=yes">Yes</a><br>
-           <a href="https://silent-ears-wish.loca.lt/response?answer=no">No</a>
+           <a href="https://http://127.0.0.1:8080/response?answer=yes">Yes</a><br>
+           <a href="https://http://127.0.0.1:8080/response?answer=no">No</a>
         </p>
       </body>
     </html>

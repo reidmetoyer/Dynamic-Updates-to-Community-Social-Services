@@ -24,11 +24,12 @@ secret_data = response.payload.data.decode("UTF-8")
 #creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "/app/credentials.json")
 #print(creds_path)
 
-with open("/app/credentials.json", "W") as f:
+credentials_path="/app/credentials.json"
+with open(credentials_path, "w") as f:
     f.write(secret_data)
-    
+
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("/app/credentials.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
 client = gspread.authorize(creds)
 
 
@@ -44,5 +45,6 @@ def response():
 
 if __name__ == "__main__":
     print("creating port...")
-    port = int(os.environ.get('PORT', 8080))
-    app.run(host='0.0.0.0', port=8080)
+    port = int(os.getenv('PORT', 8080))
+    app.run(host='0.0.0.0', port=int(os.getenv('PORT', 8080)))
+

@@ -8,8 +8,7 @@ COPY . /app
 #working directory
 WORKDIR /app
 
-#env variables
-ENV GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
+
 
 #upgrade pip
 RUN pip install --upgrade pip
@@ -22,7 +21,7 @@ EXPOSE 8080
 #define environment variable
 ENV PORT=8080
 ENV GOOGLE_CLOUD_PROJECT=nomadic-botany-429015-v7
-ENV GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
+ENV GOOGLE_APPLICATION_CREDENTIALS=credentials.json
 ENV SECRET_NAME=credentials.json
 ENV PROJECT_ID=nomadic-botany-429015-v7
 

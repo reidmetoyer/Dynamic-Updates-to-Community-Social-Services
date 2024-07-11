@@ -22,12 +22,13 @@ secret_data = response.payload.data.decode("UTF-8")
 # Google Sheets setup
 #creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "/app/credentials.json")
 #print(creds_path)
+
+with open("/app/credentials.json", "W") as f:
+    f.write(secret_data)
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = service_account.Credentials.from_service_account_info(
-    json.loads(secret_data), scopes=["scope"]
-)
+creds = ServiceAccountCredentials.from_json_keyfile_name("/app/credentials.json", scope)
 client = gspread.authorize(creds)
-print(creds)
+
 
 # Access the spreadsheet by key
 spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"

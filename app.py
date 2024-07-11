@@ -24,7 +24,7 @@ secret_data = response.payload.data.decode("UTF-8")
 #creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "/app/credentials.json")
 #print(creds_path)
 
-credentials_path="/app/credentials.json"
+credentials_path="credentials.json"
 with open(credentials_path, "w") as f:
     f.write(secret_data)
 

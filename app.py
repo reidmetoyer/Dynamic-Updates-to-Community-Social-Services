@@ -1,18 +1,31 @@
 import os
 from flask import Flask, request
 import gspread
+from google.oauth2 import service_account
 from oauth2client.service_account import ServiceAccountCredentials
 from dotenv import load_dotenv
+from google.cloud import secretmanager
+import json
 
 load_dotenv()
 
 app = Flask(__name__)
 
+secret_name = os.environ.get("SECRET_NAME")
+project_id = os.environ.get("PROJECT_ID")
+
+client = secretmanager.SecretManagerServiceClient()
+secret_path = f"projects/{project_id}/secrets/{secret_name}/versions/latest"
+response = client.access_secret_version(name=secret_path)
+secret_data = response.payload.data.decode("UTF-8")
+
 # Google Sheets setup
-creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "/app/credentials.json")
-print(creds_path)
+#creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "/app/credentials.json")
+#print(creds_path)
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name(creds_path, scope)
+creds = service_account.Credentials.from_service_account_info(
+    json.loads(secret_data), scopes=["scope"]
+)
 client = gspread.authorize(creds)
 print(creds)
 

@@ -7,6 +7,12 @@ WORKDIR /app
 #copy directory contents into /app container
 COPY . /app
 
+# Copy the credentials file separately
+COPY credentials.json /app/credentials.json
+
+# Set appropriate permissions
+RUN chmod 644 /app/credentials.json
+
 #upgrade pip
 RUN pip install --upgrade pip
 #install any packages in requirements.txt

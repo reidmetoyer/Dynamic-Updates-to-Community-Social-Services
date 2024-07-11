@@ -11,12 +11,13 @@ load_dotenv()
 
 app = Flask(__name__)
 
-secret_name = os.environ.get("SECRET_NAME")
-project_id = os.environ.get("PROJECT_ID")
-
 client = secretmanager.SecretManagerServiceClient()
-secret_path = f"projects/{project_id}/secrets/{secret_name}/versions/latest"
-response = client.access_secret_version(name=secret_path)
+
+secret_name = os.getenv("SECRET_NAME")
+project_id = os.getenv("PROJECT_ID")
+name = f"projects/{project_id}/secrets/{secret_name}/versions/latest"
+
+response = client.access_secret_version(name=name)
 secret_data = response.payload.data.decode("UTF-8")
 
 # Google Sheets setup
@@ -25,6 +26,7 @@ secret_data = response.payload.data.decode("UTF-8")
 
 with open("/app/credentials.json", "W") as f:
     f.write(secret_data)
+    
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name("/app/credentials.json", scope)
 client = gspread.authorize(creds)

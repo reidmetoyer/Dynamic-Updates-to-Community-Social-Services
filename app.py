@@ -28,6 +28,9 @@ credentials_path="credentials.json"
 with open(credentials_path, "w") as f:
     f.write(secret_data)
 
+#TRY THIS FRIDAY
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath(credentials_path)
+#TRY THIS FRIDAY
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
 client = gspread.authorize(creds)

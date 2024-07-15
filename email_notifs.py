@@ -139,6 +139,7 @@ def construct_email(org, recipient, info):
         <li>
             <strong>{key}:</strong> {value} <br>
             <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/response" method="get">
+                <input type="hidden" name="sheet" value="{key}">
                 <button type="submit" name="answer" value="yes">Yes</button>
                 <button type="submit" name="answer" value="no">No</button>
             </form>
@@ -194,7 +195,7 @@ def delete_pdfs(file_paths):
 #notif_smh()
 #notif_olotr()
 #notif_cfth()
-
+"""
 if __name__ == "__main__":
     info_dict = {
         "Name": "John Doe",
@@ -204,6 +205,6 @@ if __name__ == "__main__":
 
     server_url = "http://localhost:8080"
     send_email("reid.metoyer@gmail.com", info_dict)
+"""
 
-
-#notif_smh()
+notif_smh()

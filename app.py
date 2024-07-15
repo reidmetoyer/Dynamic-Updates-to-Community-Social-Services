@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import gspread
 from google.oauth2 import service_account
 from oauth2client.service_account import ServiceAccountCredentials
@@ -60,6 +60,17 @@ def response():
             return "failed to record response", 500
         
     return "Missing key or answer", 400
+
+
+@app.route('/test_google_sheets')
+def test_google_sheets():
+    try:
+        sheet.append_row(["Test"])
+        return jsonify({"status": "success", "message": "Successfully appended a test row to the sheet."})
+    except Exception as e:
+        app.logger.error(f"Error during Google Sheets test: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
 
 if __name__ == "__main__":
     print("creating port...")

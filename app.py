@@ -11,11 +11,14 @@ load_dotenv()
 
 app = Flask(__name__)
 
-client = secretmanager.SecretManagerServiceClient()
+
 
 secret_name = os.getenv("SECRET_NAME")
 project_id = os.getenv("PROJECT_ID")
+
 name = f"projects/{project_id}/secrets/{secret_name}/versions/latest"
+
+client = secretmanager.SecretManagerServiceClient()
 
 response = client.access_secret_version(name=name)
 secret_data = response.payload.data.decode("UTF-8")
@@ -25,6 +28,7 @@ secret_data = response.payload.data.decode("UTF-8")
 #print(creds_path)
 
 credentials_path="credentials.json"
+
 with open(credentials_path, "w") as f:
     f.write(secret_data)
 
@@ -41,15 +45,13 @@ spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
 sheet = client.open_by_key(spreadsheet_key).sheet1
 
 
-
-
 @app.route('/response', methods=['GET'])
 def response():
-    key = request.args.get('key')
+    answer = request.args.get('answer')
     answer = request.args.get('answer')
 
     app.logger.info(f"Received response: key={key}, answer={answer}")
-    if key and answer:
+    if answer:
         try:
         # Append the key and answer to the spreadsheet
             sheet.append_row([answer])

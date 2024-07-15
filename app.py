@@ -40,11 +40,25 @@ client = gspread.authorize(creds)
 spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
 sheet = client.open_by_key(spreadsheet_key).sheet1
 
+
+def get_sheet_by_name(sheet_name):
+    try:
+        sheet = sheet.worksheet(sheet_name)
+        return sheet
+    except gspread.WorksheetNotFound:
+        return None
+
 @app.route('/response', methods=['GET'])
 def response():
     key = request.args.get('key')
     answer = request.args.get('answer')
+    sheet_name = request.args.get('sheet', 'Sheet1')
     app.logger.info(f"Received response: key={key}, answer={answer}")
+
+    cur_sheet = get_sheet_by_name(sheet_name)
+    if not cur_sheet:
+        return f"Sheet '{sheet_name}' not found ", 400
+    
     if key and answer:
         # Append the key and answer to the spreadsheet
         sheet.append_row([key, answer])

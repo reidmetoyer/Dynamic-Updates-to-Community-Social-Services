@@ -47,7 +47,7 @@ sheet = client.open_by_key(spreadsheet_key).sheet1
 
 def get_sheet_by_name(sheet_name):
     try:
-        sheet = spreadsheet.worksheet(sheet_name)
+        sheet = sheet.worksheet(sheet_name)
         return sheet
     except gspread.WorksheetNotFound:
         app.logger.error(f"Sheet '{sheet_name}' not found.")

@@ -62,7 +62,8 @@ def response():
 
     cur_sheet = get_sheet_by_name(sheet_name)
     if not cur_sheet:
-        return f"Sheet '{sheet_name}' not found", 400
+        cur_sheet = client.open_by_key(spreadsheet_key).sheet1
+        cur_sheet.append_row(([answer]))
     
     if answer:
         try:

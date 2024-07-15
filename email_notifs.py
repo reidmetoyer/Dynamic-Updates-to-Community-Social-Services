@@ -139,7 +139,6 @@ def send_email(org, recipient, info):
         <li>
             <strong>{key}:</strong> {value} <br>
             <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/response" method="get">
-                <input type="hidden" name="key" value="{key}">
                 <button type="submit" name="answer" value="yes">Yes</button>
                 <button type="submit" name="answer" value="no">No</button>
             </form>

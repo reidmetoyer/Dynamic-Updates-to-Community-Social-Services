@@ -56,7 +56,7 @@ def notif_smh():
     output_pdf = "merged_output.pdf"
     pdf_download(urls, file_paths, output_pdf)
     info = get_info(output_pdf)
-    send_email(org, recipient, info)
+    send_email(recipient, info)
     file_paths.append(output_pdf)
     #delete_pdfs(file_paths)
 
@@ -122,7 +122,7 @@ def get_info(pdfs):
     return info
 
 #helper function to construct and send email to target organization
-def send_email(org, recipient, info):
+def construct_email(org, recipient, info):
     print("constructing email")
     print(info)
     #subject = org + " Website Info Check-In"
@@ -151,6 +151,11 @@ def send_email(org, recipient, info):
     </html>
     """
 
+    return body
+
+def send_email(recipient, info):
+
+
     server = smtplib.SMTP(host='smtp.gmail.com', port=587)
     server.starttls()
     server.login(sender, email_password)
@@ -159,6 +164,8 @@ def send_email(org, recipient, info):
     msg['From'] = sender
     msg['To'] = recipient
     msg['Subject'] = "Website Info Check-In"
+    body = construct_email('smh', recipient, info)
+
     msg.attach(MIMEText(body, 'html'))
    #msg.set_content(body)
     context = ssl.create_default_context()
@@ -184,6 +191,19 @@ def delete_pdfs(file_paths):
         except Exception as e:
             print(f"Error deleting {file}: {e}")
 
-notif_smh()
+#notif_smh()
 #notif_olotr()
 #notif_cfth()
+
+if __name__ == "__main__":
+    info_dict = {
+        "Name": "John Doe",
+        "Email": "john.doe@example.com",
+        "Subscription": "Premium"
+    }
+
+    server_url = "http://localhost:8080"
+    send_email("reid.metoyer@gmail.com", info_dict)
+
+
+notif_smh()

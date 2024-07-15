@@ -14,6 +14,7 @@ from email.mime.text import MIMEText
 from flask import Flask, request
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+#from app import app, sheet
 
 
 
@@ -31,6 +32,7 @@ env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 client = OpenAI()
 
+
 sender = "rmetoye2@nd.edu"
 recipient = "reid.metoyer@gmail.com"
 email_password = "bofw ucqi mvis sskp"
@@ -38,8 +40,8 @@ email_password = "bofw ucqi mvis sskp"
 
 
 
-spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
-sheet = client.open_by_key(spreadsheet_key).sheet1
+#spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
+#sheet = client.open_by_key(spreadsheet_key).sheet1
 
 #ST MARGARET's HOUSE
 def notif_smh():
@@ -124,35 +126,47 @@ def send_email(org, recipient, info):
     print("constructing email")
     print(info)
     #subject = org + " Website Info Check-In"
-    body = "Here's your regularly scheduled website information check-in. Take a look at what we've identified on your website, and make sure all the information is correct. If it's not, make note of it and try to fix it as soon as you can!\n\n"
-
-    for item in info:
-        if item == "events":
-            body += "\nYour website lists "
-            for event in info[item]:
-                body += event + ", " 
-            body += "as upcoming. Is this correct? Yes/No\n"
-            body += "-------------------\n\n"
-        elif item == "hours of operation":
-            body += "Your hours of operation are " + info[item] + ". Is this correct? Yes/No\n"
-            body += "-------------------\n"
-        else:
-            body += "Your " + item + " is " + info[item] + ". Is this correct? Yes/No\n"
-            body += "-------------------\n"
-
-
-
-
-    body = """\
+    body = """
     <html>
-      <body>
-        <p>Is this information up to date?<br>
-           <a href="https://http://127.0.0.1:8080/response?answer=yes">Yes</a><br>
-           <a href="https://http://127.0.0.1:8080/response?answer=no">No</a>
-        </p>
-      </body>
+    <body>
+    <p>Please review the following information and respond:</p>
+    <ul>
+    """
+    
+    # Add each item from the dictionary to the body with yes/no buttons
+    for key, value in info.items():
+        body += f"""
+        <li>
+            <strong>{key}:</strong> {value} <br>
+            <a href="#" onclick="sendResponse('{key}', 'yes'); return false;">Yes</a> |
+            <a href="#" onclick="sendResponse('{key}', 'no'); return false;">No</a>
+        </li>
+        """
+    
+    body += f"""
+    </ul>
+    <script>
+    function sendResponse(key, answer) {{
+        console.log('Sending response:', key, answer); // Add this line
+        fetch('{'http://localhost:8080'}/response?key=' + encodeURIComponent(key) + '&answer=' + answer)
+            .then(response => response.text())
+            .then(data => {{
+                alert('Response sent for ' + key + ': ' + answer);
+            }})
+            .catch(error => {{
+                console.error('Error:', error);
+                alert('Failed to send response for ' + key + '.');
+            }});
+    }}
+    </script>
+    </body>
     </html>
     """
+
+    server = smtplib.SMTP(host='smtp.gmail.com', port=587)
+    server.starttls()
+    server.login(sender, email_password)
+
     msg = MIMEMultipart()
     msg['From'] = sender
     msg['To'] = recipient
@@ -162,18 +176,11 @@ def send_email(org, recipient, info):
     context = ssl.create_default_context()
 
 
-    print("sending email")
-    with smtplib.SMTP('smtp.gmail.com', 587) as server:
-        server.starttls()
-        server.login(sender, email_password)
-        server.sendmail(sender, recipient, msg.as_string())
+    server.send_message(msg)
+    server.quit()
 
     print(body)
 
-def response():
-    answer = request.args.get('answer')
-    sheet.append_row([answer])
-    return "Thank you for your response!"
 
 
 def delete_pdfs(file_paths):

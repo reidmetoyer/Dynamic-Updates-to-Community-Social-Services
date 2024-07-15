@@ -42,7 +42,7 @@ client = gspread.authorize(creds)
 
 # Access the spreadsheet by key
 spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
-sheet = client.open_by_key(spreadsheet_key).sheet1
+sheet = client.open_by_key(spreadsheet_key)
 
 
 def get_sheet_by_name(sheet_name):

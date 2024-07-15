@@ -133,32 +133,21 @@ def send_email(org, recipient, info):
     <ul>
     """
     
-    # Add each item from the dictionary to the body with yes/no buttons
+    # Add each item from the dictionary to the body with yes/no forms
     for key, value in info.items():
         body += f"""
         <li>
             <strong>{key}:</strong> {value} <br>
-            <a href="#" onclick="sendResponse('{key}', 'yes'); return false;">Yes</a> |
-            <a href="#" onclick="sendResponse('{key}', 'no'); return false;">No</a>
+            <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/response" method="get">
+                <input type="hidden" name="key" value="{key}">
+                <button type="submit" name="answer" value="yes">Yes</button>
+                <button type="submit" name="answer" value="no">No</button>
+            </form>
         </li>
         """
     
-    body += f"""
+    body += """
     </ul>
-    <script>
-    function sendResponse(key, answer) {{
-        console.log('Sending response:', key, answer); // Add this line
-        fetch('{'http://localhost:8080'}/response?key=' + encodeURIComponent(key) + '&answer=' + answer)
-            .then(response => response.text())
-            .then(data => {{
-                alert('Response sent for ' + key + ': ' + answer);
-            }})
-            .catch(error => {{
-                console.error('Error:', error);
-                alert('Failed to send response for ' + key + '.');
-            }});
-    }}
-    </script>
     </body>
     </html>
     """

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Email</title>
+</head>
+<body>
+<p>Please review the following information and respond:</p>
+<ul>
+    <li>
+        <strong>Name:</strong> John Doe <br>
+        <a href="#" onclick="sendResponse('Name', 'yes'); return false;">Yes</a> |
+        <a href="#" onclick="sendResponse('Name', 'no'); return false;">No</a>
+    </li>
+    <li>
+        <strong>Email:</strong> john.doe@example.com <br>
+        <a href="#" onclick="sendResponse('Email', 'yes'); return false;">Yes</a> |
+        <a href="#" onclick="sendResponse('Email', 'no'); return false;">No</a>
+    </li>
+    <li>
+        <strong>Subscription:</strong> Premium <br>
+        <a href="#" onclick="sendResponse('Subscription', 'yes'); return false;">Yes</a> |
+        <a href="#" onclick="sendResponse('Subscription', 'no'); return false;">No</a>
+    </li>
+</ul>
+<script>
+    function sendResponse(key, answer) {
+        console.log('Sending response:', key, answer);
+        fetch('https://email-notifs-qbwaylvbsa-uc.a.run.app/response?key=' + encodeURIComponent(key) + '&answer=' + answer)
+            .then(response => response.text())
+            .then(data => {
+                alert('Response sent for ' + key + ': ' + answer);
+                console.log('Server response:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to send response for ' + key + '.');
+            });
+    }
+</script>
+</body>
+</html>

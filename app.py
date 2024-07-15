@@ -48,9 +48,8 @@ sheet = client.open_by_key(spreadsheet_key).sheet1
 @app.route('/response', methods=['GET'])
 def response():
     answer = request.args.get('answer')
-    answer = request.args.get('answer')
+    app.logger.info(f"received response: answer={answer}")
 
-    app.logger.info(f"Received response: key={key}, answer={answer}")
     if answer:
         try:
         # Append the key and answer to the spreadsheet

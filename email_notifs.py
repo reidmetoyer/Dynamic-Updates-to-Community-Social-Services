@@ -206,4 +206,4 @@ if __name__ == "__main__":
     send_email("reid.metoyer@gmail.com", info_dict)
 
 
-notif_smh()
+#notif_smh()

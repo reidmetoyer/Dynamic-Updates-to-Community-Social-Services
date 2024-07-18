@@ -60,12 +60,12 @@ def track_click():
     recipient_email = request.args.get('recipient')
     date = datetime.now().strftime("%Y-%m-%d")
 
-    next_row = len(sheet.col_values(2)) + 1
-
     sheet_name = request.args.get('sheet', 'Sheet1')
     app.logger.info(f"received responseL answer={answer}, sheet={sheet_name}")
 
     cur_sheet = get_sheet_by_name(sheet_name)
+    next_row = len(cur_sheet.col_values(2)) + 1
+
     if not cur_sheet:
         cur_sheet = client.open_by_key(spreadsheet_key).sheet1
         sheet.update_cell(next_row, 1, answer)

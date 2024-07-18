@@ -138,7 +138,7 @@ def construct_email(org, recipient, info):
         body += f"""
         <li>
             <strong>{key}:</strong> {value} <br>
-            <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/response" method="get">
+            <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/track_click" method="get">
                 <input type="hidden" name="sheet" value="{key}">
                 <input type="hidden" name="recipient_email" value="{recipient}">
                 <button type="submit" name="answer" value="yes">Yes</button>

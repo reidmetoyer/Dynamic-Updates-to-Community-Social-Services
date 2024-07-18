@@ -58,7 +58,7 @@ def notif_smh():
     info = get_info(output_pdf)
     send_email(recipient, info)
     file_paths.append(output_pdf)
-    #delete_pdfs(file_paths)
+    delete_pdfs(file_paths)
 
 
 #OUR LADY OF THE ROAD
@@ -140,6 +140,7 @@ def construct_email(org, recipient, info):
             <strong>{key}:</strong> {value} <br>
             <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/response" method="get">
                 <input type="hidden" name="sheet" value="{key}">
+                <input type="hidden" name="recipient_email" value="{recipient}">
                 <button type="submit" name="answer" value="yes">Yes</button>
                 <button type="submit" name="answer" value="no">No</button>
             </form>
@@ -174,8 +175,6 @@ def send_email(recipient, info):
 
     server.send_message(msg)
     server.quit()
-
-    print(body)
 
 
 

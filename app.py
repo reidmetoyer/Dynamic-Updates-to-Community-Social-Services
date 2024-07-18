@@ -6,6 +6,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from dotenv import load_dotenv
 from google.cloud import secretmanager
 import json
+from datetime import datetime
 
 load_dotenv()
 
@@ -23,9 +24,7 @@ client = secretmanager.SecretManagerServiceClient()
 response = client.access_secret_version(name=name)
 secret_data = response.payload.data.decode("UTF-8")
 
-# Google Sheets setup
-#creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "/app/credentials.json")
-#print(creds_path)
+
 
 credentials_path="credentials.json"
 
@@ -45,6 +44,7 @@ spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
 sheet = client.open_by_key(spreadsheet_key)
 
 
+
 def get_sheet_by_name(sheet_name):
     try:
         cur_sheet = sheet.worksheet(sheet_name)
@@ -52,8 +52,41 @@ def get_sheet_by_name(sheet_name):
     except gspread.WorksheetNotFound:
         app.logger.error(f"Sheet '{sheet_name}' not found.")
         return None
-                    
 
+
+@app.route('/track_click')
+def track_click():
+    answer = request.args.get('answer')
+    recipient_email = request.args.get('recipient')
+    date = datetime.now().strftime("%Y-%m-%d")
+
+    next_row = len(sheet.col_values(2)) + 1
+
+    sheet_name = request.args.get('sheet', 'Sheet1')
+    app.logger.info(f"received responseL answer={answer}, sheet={sheet_name}")
+
+    cur_sheet = get_sheet_by_name(sheet_name)
+    if not cur_sheet:
+        cur_sheet = client.open_by_key(spreadsheet_key).sheet1
+        sheet.update_cell(next_row, 1, answer)
+        sheet.update_cell(next_row, 2, recipient_email)
+        sheet.update_cell(next_row, 3, date)
+
+
+    if answer:
+        try:
+            cur_sheet = client.open_by_key(spreadsheet_key).sheet1
+            sheet.update_cell(next_row, 1, answer)
+            sheet.update_cell(next_row, 2, recipient_email)
+            sheet.update_cell(next_row, 3, date)
+            return "Thank you for your response!"
+        except Exception as e:
+            return "failed to record response", 500
+        
+    return "Missing answer", 400
+
+
+"""
 @app.route('/response', methods=['GET'])
 def response():
     answer = request.args.get('answer')
@@ -74,7 +107,7 @@ def response():
             return "failed to record response", 500
         
     return "Missing key or answer", 400
-
+"""
 
 @app.route('/test_google_sheets')
 def test_google_sheets():

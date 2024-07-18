@@ -67,17 +67,14 @@ def track_click():
     next_row = len(cur_sheet.col_values(2)) + 1
 
     if not cur_sheet:
-        cur_sheet = client.open_by_key(spreadsheet_key).sheet1
-        sheet.update_cell(next_row, 1, answer)
-        sheet.update_cell(next_row, 2, recipient_email)
-        sheet.update_cell(next_row, 3, date)
+        return "sheet not found", 400
 
 
     if answer:
         try:
-            sheet.update_cell(next_row, 1, answer)
-            sheet.update_cell(next_row, 2, recipient_email)
-            sheet.update_cell(next_row, 3, date)
+            cur_sheet.update_cell(next_row, 1, answer)
+            cur_sheet.update_cell(next_row, 2, recipient_email)
+            cur_sheet.update_cell(next_row, 3, date)
             return "Thank you for your response!"
         except Exception as e:
             return "failed to record response", 500

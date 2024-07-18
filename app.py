@@ -75,7 +75,6 @@ def track_click():
 
     if answer:
         try:
-            cur_sheet = client.open_by_key(spreadsheet_key)
             sheet.update_cell(next_row, 1, answer)
             sheet.update_cell(next_row, 2, recipient_email)
             sheet.update_cell(next_row, 3, date)

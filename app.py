@@ -57,7 +57,7 @@ def get_sheet_by_name(sheet_name):
 @app.route('/track_click')
 def track_click():
     answer = request.args.get('answer')
-    recipient_email = request.args.get('recipient')
+    recipient_email = request.args.get('recipient_email')
     date = datetime.now().strftime("%Y-%m-%d")
 
     sheet_name = request.args.get('sheet', 'Sheet1')

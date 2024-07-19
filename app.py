@@ -61,6 +61,7 @@ def track_click():
     date = datetime.now().strftime("%Y-%m-%d")
 
     sheet_name = request.args.get('sheet', 'Sheet1')
+
     app.logger.info(f"received responseL answer={answer}, sheet={sheet_name}")
 
     cur_sheet = get_sheet_by_name(sheet_name)
@@ -69,6 +70,13 @@ def track_click():
     if not cur_sheet:
         return "sheet not found", 400
 
+    if sheet_name == "Events":
+            event = request.args.get('event')
+            cur_sheet.update_cell(next_row, 1, event)
+            cur_sheet.update_cell(next_row, 2, answer)
+            cur_sheet.update_cell(next_row, 3, recipient_email)
+            cur_sheet.update_cell(next_row, 4, date)
+            return "Thank you for your response!"
 
     if answer:
         try:

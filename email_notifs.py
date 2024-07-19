@@ -14,6 +14,7 @@ from email.mime.text import MIMEText
 from flask import Flask, request
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from scrape_events import scrape_smh
 #from app import app, sheet
 
 
@@ -46,7 +47,7 @@ email_password = "bofw ucqi mvis sskp"
 #ST MARGARET's HOUSE
 def notif_smh():
     #smh-specific variables
-    org = "SMH"
+    org = "smh"
     #recipient = ""
     urls = ["https://stmargaretshouse.org/contact-us/", "https://stmargaretshouse.org/events/"]
     file_paths = ["file1.pdf", "file2.pdf"]
@@ -150,6 +151,25 @@ def construct_email(org, recipient, info):
             </form>
         </li>
         """
+    if org == 'smh':
+        body+= """<br>"""
+        body += """<strong>Are the following events UPCOMING events?</strong>"""
+        events = scrape_smh()
+        for key, value in events.items():
+            body += f"""
+            <li>
+                <div>Event Name: {key}</div>
+                <div>Date: {value['Date']}</div>
+                <div>Location: {value['Location']}</div>
+                <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/track_click" method="get" style="display: inline;">
+                    <input type="hidden" name="event" value={key}>
+                    <input type="hidden" name="sheet" value="Events">
+                    <input type="hidden" name="recipient_email" value="{recipient}">
+                    <button type="submit" name="answer" value="Upcoming">Yes</button>
+                    <button type="submit" name="answer" value="Passed">No</button>
+                </form>
+            </li>
+            """
    
 
     body += """

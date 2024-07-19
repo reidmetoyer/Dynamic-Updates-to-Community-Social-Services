@@ -82,6 +82,54 @@ def track_click():
     return "Missing answer", 400
 
 
+@app.route('/no_response')
+def no_response():
+    sheet = request.args.get('sheet')
+    recipient_email = request.args.get('recipient_email')
+    
+    html_content = f"""
+    <html>
+    <head>
+        <title>Provide Correct Information</title>
+    </head>
+    <body>
+        <form action="/submit_correct_info" method="post">
+            <input type="hidden" name="sheet" value="{sheet}">
+            <input type="hidden" name="recipient_email" value="{recipient_email}">
+            <label for="correct_info">Please provide the correct information:</label>
+            <textarea id="correct_info" name="correct_info" rows="4" cols="50"></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+    </html>
+    """
+    return html_content
+
+@app.route('/submit_correct_info', methods=['POST'])
+def submit_correct_info():
+    sheet_name = request.form['sheet']
+    recipient_email = request.form['recipient_email']
+    correct_info = request.form['correct_info']
+    date = datetime.now().strftime("%Y-%m-%d")
+
+    cur_sheet = get_sheet_by_name(sheet_name)
+
+    if not cur_sheet:
+        return "Sheet not found", 400
+
+    next_row = len(cur_sheet.col_values(2)) + 1
+
+    try:
+        cur_sheet.update_cell(next_row, 1, 'no')
+        cur_sheet.update_cell(next_row, 2, recipient_email)
+        cur_sheet.update_cell(next_row, 3, date)
+        cur_sheet.update_cell(next_row, 4, correct_info)
+        return "Thank you for your response!"
+    except Exception as e:
+        app.logger.error(f"Failed to record response: {e}")
+        return "Failed to record response", 500
+
+
 """
 @app.route('/response', methods=['GET'])
 def response():

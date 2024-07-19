@@ -173,7 +173,7 @@ def construct_email(org, recipient, info):
                 <div>Date: {value['Date']}</div>
                 <div>Location: {value['Location']}</div>
                 <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/track_click" method="get" style="display: inline;" onsubmit="encodeEventName(this);">
-                    <input type="hidden" name="event" value={key}>
+                    <input type="hidden" name="event" value="{key}">
                     <input type="hidden" name="sheet" value="Events">
                     <input type="hidden" name="recipient_email" value="{recipient}">
                     <button type="submit" name="answer" value="Upcoming">Yes</button>

@@ -129,6 +129,14 @@ def construct_email(org, recipient, info):
     #subject = org + " Website Info Check-In"
     body = """
     <html>
+    <head>
+        <script>
+            function encodeEventName(form) {
+                var eventName = form.querySelector('span[id^="event_name"]').textContent;
+                form.elements['event'].value = encodeURIComponent(eventName);    
+            }
+        </script>
+    </head>
     <body>
     <p>Please review the following information and respond:</p>
     <ul>
@@ -151,17 +159,20 @@ def construct_email(org, recipient, info):
             </form>
         </li>
         """
+    body += """
+    </ul>"""
     if org == 'smh':
-        body+= """<br>"""
+        body+= """<br>
+        <ul>"""
         body += """<strong>Are the following events UPCOMING events?</strong>"""
         events = scrape_smh()
         for key, value in events.items():
             body += f"""
             <li>
-                <div>Event Name: {key}</div>
+                <div>Event Name: <span id="event_name_{key}">{key}</span></div>
                 <div>Date: {value['Date']}</div>
                 <div>Location: {value['Location']}</div>
-                <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/track_click" method="get" style="display: inline;">
+                <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/track_click" method="get" style="display: inline;" onsubmit="encodeEventName(this);">
                     <input type="hidden" name="event" value={key}>
                     <input type="hidden" name="sheet" value="Events">
                     <input type="hidden" name="recipient_email" value="{recipient}">
@@ -170,7 +181,6 @@ def construct_email(org, recipient, info):
                 </form>
             </li>
             """
-   
 
     body += """
     </ul>

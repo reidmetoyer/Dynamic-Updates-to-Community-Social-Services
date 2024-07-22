@@ -129,14 +129,13 @@ def get_info(pdfs):
 #retreive the correct spreadsheet key
 def set_sheet_key(org):
     
-    match org:
-        case "smh":
+    if org == 'smh':
             spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
-        case "olotr":
+    elif org == "olotr":
             spreadsheet_key = "1Hr1pnFSiMLi5heVjCGzSTfl-TovPEXFTYdC50MG4h3U"
-        case "cfth":
+    elif org == "cfth":
             spreadsheet_key = "1bv6ng14X7A6-sHjOrpt92fzEJ7Reu_WsDjKzx1yw5Zc"
-        case "fb":
+    elif org == "fb":
             spreadsheet_key = "1NzOlYVwSoTyl2_3LbcXAeHtXqXr11iFzvNqXbiLbWDU"
 
 def get_sheet_key():

@@ -47,7 +47,7 @@ email_password = "bofw ucqi mvis sskp"
 #ST MARGARET's HOUSE
 def notif_smh():
     #smh-specific variables
-    org = "smh"
+    org = "olotr"
     #recipient = ""
     urls = ["https://stmargaretshouse.org/contact-us/", "https://stmargaretshouse.org/events/"]
     file_paths = ["file1.pdf", "file2.pdf"]
@@ -55,6 +55,7 @@ def notif_smh():
     #notification logic
     print("notifying st margarets house")
     output_pdf = "merged_output.pdf"
+    set_sheet_key(org)
     pdf_download(urls, file_paths, output_pdf)
     info = get_info(output_pdf)
     send_email(org, recipient, info)
@@ -65,7 +66,7 @@ def notif_smh():
 #OUR LADY OF THE ROAD
 def notif_olotr():
     #olotr-specific variables
-    org = "OLOTR"
+    org = "olotr"
     #recipient = ""
     urls = ["https://www.olrsb.org/get-involved"]
     file_paths = ["file1.pdf"]
@@ -74,6 +75,7 @@ def notif_olotr():
     #notification logic
     print("notifying our lady of the road")
     output_pdf = "merged_output.pdf"
+    set_sheet_key(org)
     pdf_download(urls, file_paths, output_pdf)
     info = get_info(output_pdf)
     send_email(org, recipient, info)
@@ -84,7 +86,7 @@ def notif_olotr():
 # CENTER FOR THE HOMELESS
 def notif_cfth():
     #smh-specific variables
-    org = "CFTH"
+    org = "cfth"
     #recipient = ""
     urls = ["https://www.cfh.net/contact"]
     file_paths = ["file1.pdf"]
@@ -121,6 +123,23 @@ def get_info(pdfs):
     info = extract_info()
     print("getting info")
     return info
+
+#retreive the correct spreadsheet key
+def set_sheet_key(org):
+    spreadsheet_key = "x"
+    match org:
+        case "smh":
+            spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
+        case "olotr":
+            spreadsheet_key = "1Hr1pnFSiMLi5heVjCGzSTfl-TovPEXFTYdC50MG4h3U"
+        case "cfth":
+            spreadsheet_key = "1bv6ng14X7A6-sHjOrpt92fzEJ7Reu_WsDjKzx1yw5Zc"
+        case "fb":
+            spreadsheet_key = "1NzOlYVwSoTyl2_3LbcXAeHtXqXr11iFzvNqXbiLbWDU"
+    os.environ["ORG_SHEET_KEY"] = spreadsheet_key
+    print("sheet key: ")
+    print(os.getenv("ORG_SHEET_KEY"))
+
 
 #helper function to construct and send email to target organization
 def construct_email(org, recipient, info):

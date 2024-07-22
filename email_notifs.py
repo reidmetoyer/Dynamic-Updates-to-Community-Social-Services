@@ -37,6 +37,7 @@ client = OpenAI()
 sender = "rmetoye2@nd.edu"
 recipient = "reid.metoyer@gmail.com"
 email_password = "bofw ucqi mvis sskp"
+spreadsheet_key = "x"
 
 
 
@@ -56,6 +57,7 @@ def notif_smh():
     print("notifying st margarets house")
     output_pdf = "merged_output.pdf"
     set_sheet_key(org)
+    #get_sheet_key()
     pdf_download(urls, file_paths, output_pdf)
     info = get_info(output_pdf)
     send_email(org, recipient, info)
@@ -126,7 +128,7 @@ def get_info(pdfs):
 
 #retreive the correct spreadsheet key
 def set_sheet_key(org):
-    spreadsheet_key = "x"
+    
     match org:
         case "smh":
             spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
@@ -136,9 +138,9 @@ def set_sheet_key(org):
             spreadsheet_key = "1bv6ng14X7A6-sHjOrpt92fzEJ7Reu_WsDjKzx1yw5Zc"
         case "fb":
             spreadsheet_key = "1NzOlYVwSoTyl2_3LbcXAeHtXqXr11iFzvNqXbiLbWDU"
-    os.environ["ORG_SHEET_KEY"] = spreadsheet_key
-    print("sheet key: ")
-    print(os.getenv("ORG_SHEET_KEY"))
+
+def get_sheet_key():
+    return spreadsheet_key
 
 
 #helper function to construct and send email to target organization

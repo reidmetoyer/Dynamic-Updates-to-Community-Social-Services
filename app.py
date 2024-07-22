@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from google.cloud import secretmanager
 import json
 from datetime import datetime
+from email_notifs import get_sheet_key
 
 
 load_dotenv()
@@ -57,7 +58,7 @@ def get_sheet_by_name(sheet_name):
 
 @app.route('/track_click')
 def track_click():
-    spreadsheet_key = os.getenv('ORG_SHEET_KEY')
+    spreadsheet_key = get_sheet_key()
     sheet = client.open_by_key(spreadsheet_key)
     
     answer = request.args.get('answer')

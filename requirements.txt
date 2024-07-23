@@ -8,3 +8,5 @@ google-auth-httplib2
 google-api-python-client
 datetime
 openai
+pdfkit
+PyPDF2

@@ -10,3 +10,4 @@ datetime
 openai
 pdfkit
 PyPDF2
+bs4

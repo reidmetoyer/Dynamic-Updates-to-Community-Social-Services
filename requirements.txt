@@ -8,6 +8,3 @@ google-auth-httplib2
 google-api-python-client
 datetime
 openai
-smtplib
-email
-ssl

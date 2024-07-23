@@ -15,6 +15,7 @@ from flask import Flask, request
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from scrape_events import scrape_smh
+from google.cloud import secretmanager
 #from app import app, sheet
 
 
@@ -56,7 +57,7 @@ def notif_smh():
     #notification logic
     print("notifying st margarets house")
     output_pdf = "merged_output.pdf"
-    set_sheet_key(org)
+    spreadsheet_key = set_sheet_key(org)
     #get_sheet_key()
     pdf_download(urls, file_paths, output_pdf)
     info = get_info(output_pdf)
@@ -137,9 +138,33 @@ def set_sheet_key(org):
             spreadsheet_key = "1bv6ng14X7A6-sHjOrpt92fzEJ7Reu_WsDjKzx1yw5Zc"
     elif org == "fb":
             spreadsheet_key = "1NzOlYVwSoTyl2_3LbcXAeHtXqXr11iFzvNqXbiLbWDU"
-
-def get_sheet_key():
     return spreadsheet_key
+
+def set_custom_env_var(spreadsheet_key):
+    client = secretmanager.SecretManagerServiceClient()
+    project_id = os.getenv('PROJECT_ID')
+    secret_id = "ORG_SHEET_KEY"
+    secret_value = spreadsheet_key  # Replace with the actual value you want to set
+
+    parent = f"projects/{project_id}/secrets/{secret_id}"
+
+    # Check if the secret exists
+    try:
+        client.get_secret(request={"name": parent})
+    except Exception as e:
+        # If the secret does not exist, create it
+        client.create_secret(
+            request={
+                "parent": f"projects/{project_id}",
+                "secret_id": secret_id,
+                "secret": {"replication": {"automatic": {}}},
+            }
+        )
+
+    # Add a new version with the updated value
+    client.add_secret_version(
+        request={"parent": parent, "payload": {"data": secret_value.encode("UTF-8")}}
+    )
 
 
 #helper function to construct and send email to target organization

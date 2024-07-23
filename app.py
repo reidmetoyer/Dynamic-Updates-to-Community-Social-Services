@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from google.cloud import secretmanager
 import json
 from datetime import datetime
-from email_notifs import get_sheet_key
+#from email_notifs import get_sheet_key
 
 
 load_dotenv()
@@ -55,12 +55,22 @@ def get_sheet_by_name(sheet_name):
         app.logger.error(f"Sheet '{sheet_name}' not found.")
         return None
 
+def get_custom_env_var():
+    keyclient = secretmanager.SecretManagerServiceClient()
+    project_id = os.getenv('PROJECT_ID')
+    secret_id = "ORG_SHEET_KEY"
+
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
+    response = keyclient.access_secret_version(name=name)
+    spreadsheet_key = response.payload.data.decode('UTF-8')
+    return spreadsheet_key
+
 
 @app.route('/track_click')
 def track_click():
-    spreadsheet_key = get_sheet_key()
+    spreadsheet_key = get_custom_env_var()
     sheet = client.open_by_key(spreadsheet_key)
-    
+
     answer = request.args.get('answer')
     recipient_email = request.args.get('recipient_email')
     date = datetime.now().strftime("%Y-%m-%d")

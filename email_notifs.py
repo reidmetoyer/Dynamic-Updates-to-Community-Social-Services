@@ -143,6 +143,7 @@ def set_sheet_key(org):
 
 def set_custom_env_var(spreadsheet_key):
     print("setting GAC")
+    print("sheet key is: ", spreadsheet_key)
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
     print("setting PID")
     os.environ["PROJECT_ID"] = "email-notifs-429119"
@@ -177,6 +178,16 @@ def set_custom_env_var(spreadsheet_key):
     client.add_secret_version(
         request={"parent": parent, "payload": {"data": secret_value.encode("UTF-8")}}
     )
+
+
+    keyclient = secretmanager.SecretManagerServiceClient()
+    project_id = os.getenv('PROJECT_ID')
+    secret_id = "ORG_SHEET_KEY"
+
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
+    response = keyclient.access_secret_version(name=name)
+    test_key = response.payload.data.decode('UTF-8')
+    print("retreived key is: ", test_key)
 
 
 #helper function to construct and send email to target organization

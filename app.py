@@ -36,14 +36,16 @@ with open(credentials_path, "w") as f:
 #TRY THIS FRIDAY
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath(credentials_path)
 #TRY THIS FRIDAY
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
-client = gspread.authorize(creds)
+def initialize_gspread_client():
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
+    return gspread.authorize(creds)
+    #client = gspread.authorize(creds)
 
 
-# Access the spreadsheet by key
-spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
-sheet = client.open_by_key(spreadsheet_key)
+    # Access the spreadsheet by key
+    #spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
+    #sheet = client.open_by_key(spreadsheet_key)
 
 
 
@@ -69,6 +71,7 @@ def get_custom_env_var():
 @app.route('/track_click')
 def track_click():
     spreadsheet_key = get_custom_env_var()
+    client = initialize_gspread_client()
     sheet = client.open_by_key(spreadsheet_key)
 
     answer = request.args.get('answer')

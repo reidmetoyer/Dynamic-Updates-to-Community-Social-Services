@@ -49,7 +49,7 @@ def initialize_gspread_client():
 
 
 
-def get_sheet_by_name(sheet_name):
+def get_sheet_by_name(sheet, sheet_name):
     try:
         cur_sheet = sheet.worksheet(sheet_name)
         return cur_sheet
@@ -82,7 +82,7 @@ def track_click():
 
     app.logger.info(f"received responseL answer={answer}, sheet={sheet_name}")
 
-    cur_sheet = get_sheet_by_name(sheet_name)
+    cur_sheet = get_sheet_by_name(sheet, sheet_name)
     next_row = len(cur_sheet.col_values(2)) + 1
 
     if not cur_sheet:

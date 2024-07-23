@@ -174,7 +174,7 @@ def set_custom_env_var(spreadsheet_key):
         )
 
     # Add a new version with the updated value
-    print("update secret")
+    print("updated secret")
     client.add_secret_version(
         request={"parent": parent, "payload": {"data": secret_value.encode("UTF-8")}}
     )

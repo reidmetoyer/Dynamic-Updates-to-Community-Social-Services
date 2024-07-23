@@ -58,6 +58,7 @@ def notif_smh():
     print("notifying st margarets house")
     output_pdf = "merged_output.pdf"
     spreadsheet_key = set_sheet_key(org)
+    set_custom_env_var(spreadsheet_key)
     #get_sheet_key()
     pdf_download(urls, file_paths, output_pdf)
     info = get_info(output_pdf)
@@ -141,6 +142,13 @@ def set_sheet_key(org):
     return spreadsheet_key
 
 def set_custom_env_var(spreadsheet_key):
+    print("setting GAC")
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
+    print("setting PID")
+    os.environ["PROJECT_ID"] = "email-notifs-429119"
+    print(os.getenv('GOOGLE_APPLICATION_CREDENTIALS'))
+
+    print("setting variables")
     client = secretmanager.SecretManagerServiceClient()
     project_id = os.getenv('PROJECT_ID')
     secret_id = "ORG_SHEET_KEY"
@@ -148,11 +156,14 @@ def set_custom_env_var(spreadsheet_key):
 
     parent = f"projects/{project_id}/secrets/{secret_id}"
 
+    
     # Check if the secret exists
     try:
+        print("secret exists")
         client.get_secret(request={"name": parent})
     except Exception as e:
         # If the secret does not exist, create it
+        print("creating secret")
         client.create_secret(
             request={
                 "parent": f"projects/{project_id}",
@@ -162,6 +173,7 @@ def set_custom_env_var(spreadsheet_key):
         )
 
     # Add a new version with the updated value
+    print("update secret")
     client.add_secret_version(
         request={"parent": parent, "payload": {"data": secret_value.encode("UTF-8")}}
     )

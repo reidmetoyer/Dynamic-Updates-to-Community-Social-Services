@@ -49,7 +49,7 @@ spreadsheet_key = "x"
 #ST MARGARET's HOUSE
 def notif_smh():
     #smh-specific variables
-    org = "olotr"
+    org = "smh"
     #recipient = ""
     urls = ["https://stmargaretshouse.org/contact-us/", "https://stmargaretshouse.org/events/"]
     file_paths = ["file1.pdf", "file2.pdf"]
@@ -58,7 +58,7 @@ def notif_smh():
     print("notifying st margarets house")
     output_pdf = "merged_output.pdf"
     spreadsheet_key = set_sheet_key(org)
-    set_custom_env_var(spreadsheet_key)
+    #set_custom_env_var(spreadsheet_key)
     #get_sheet_key()
     pdf_download(urls, file_paths, output_pdf)
     info = get_info(output_pdf)
@@ -216,11 +216,13 @@ def construct_email(org, recipient, info):
         <li>
             <strong>{key}:</strong> {value} <br>
             <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/track_click" method="get" style="display: inline;">
+                <input type="hidden" name="org" value="{org}">
                 <input type="hidden" name="sheet" value="{key}">
                 <input type="hidden" name="recipient_email" value="{recipient}">
                 <button type="submit" name="answer" value="yes">Yes</button>
             </form>
             <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/no_response" method="get" style="display: inline;">
+                <input type="hidden" name="org" value="{org}">
                 <input type="hidden" name="sheet" value="{key}">
                 <input type="hidden" name="recipient_email" value="{recipient}">
                 <button type="submit" name="answer" value="no">No</button>
@@ -241,6 +243,7 @@ def construct_email(org, recipient, info):
                 <div>Date: {value['Date']}</div>
                 <div>Location: {value['Location']}</div>
                 <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/track_click" method="get" style="display: inline;" onsubmit="encodeEventName(this);">
+                    <input type="hidden" name="org" value="{org}">
                     <input type="hidden" name="event" value="{key}">
                     <input type="hidden" name="sheet" value="Events">
                     <input type="hidden" name="recipient_email" value="{recipient}">

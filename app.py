@@ -67,16 +67,30 @@ def get_custom_env_var():
     spreadsheet_key = response.payload.data.decode('UTF-8')
     return spreadsheet_key
 
+def get_key_by_org(org):
+    if org == 'smh':
+            spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
+    elif org == "olotr":
+            spreadsheet_key = "1Hr1pnFSiMLi5heVjCGzSTfl-TovPEXFTYdC50MG4h3U"
+    elif org == "cfth":
+            spreadsheet_key = "1bv6ng14X7A6-sHjOrpt92fzEJ7Reu_WsDjKzx1yw5Zc"
+    elif org == "fb":
+            spreadsheet_key = "1NzOlYVwSoTyl2_3LbcXAeHtXqXr11iFzvNqXbiLbWDU"
+    return spreadsheet_key
 
 @app.route('/track_click')
 def track_click():
-    spreadsheet_key = get_custom_env_var()
+    #spreadsheet_key = get_custom_env_var()
     client = initialize_gspread_client()
-    sheet = client.open_by_key(spreadsheet_key)
+    #sheet = client.open_by_key(spreadsheet_key)
 
     answer = request.args.get('answer')
     recipient_email = request.args.get('recipient_email')
     date = datetime.now().strftime("%Y-%m-%d")
+    org = request.args.get('org')
+
+    spreadsheet_key = get_key_by_org(org)
+    sheet = client.open_by_key(spreadsheet_key)
 
     sheet_name = request.args.get('sheet', 'Sheet1')
 

@@ -83,10 +83,10 @@ def track_click():
     #spreadsheet_key = get_custom_env_var()
     client = initialize_gspread_client()
     #sheet = client.open_by_key(spreadsheet_key)
-
+    info = request.args.get('info')
     answer = request.args.get('answer')
     recipient_email = request.args.get('recipient_email')
-    date = datetime.now().strftime("%Y-%m-%d")
+    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     org = request.args.get('org')
 
     spreadsheet_key = get_key_by_org(org)
@@ -112,9 +112,10 @@ def track_click():
 
     if answer:
         try:
-            cur_sheet.update_cell(next_row, 1, answer)
-            cur_sheet.update_cell(next_row, 2, recipient_email)
-            cur_sheet.update_cell(next_row, 3, date)
+            cur_sheet.update_cell(next_row, 1, info)
+            cur_sheet.update_cell(next_row, 2, answer)
+            cur_sheet.update_cell(next_row, 3, recipient_email)
+            cur_sheet.update_cell(next_row, 4, date)
             return "Thank you for your response!"
         except Exception as e:
             return "failed to record response", 500
@@ -124,6 +125,9 @@ def track_click():
 
 @app.route('/no_response')
 def no_response():
+    
+    info = request.args.get('info')
+    org = request.args.get('org')
     sheet = request.args.get('sheet')
     recipient_email = request.args.get('recipient_email')
     
@@ -134,6 +138,8 @@ def no_response():
     </head>
     <body>
         <form action="/submit_correct_info" method="post">
+            <input type="hidden" name="info" value="{info}">
+            <input type="hidden" name="org" value="{org}">
             <input type="hidden" name="sheet" value="{sheet}">
             <input type="hidden" name="recipient_email" value="{recipient_email}">
             <label for="correct_info">Please provide the correct information:</label>
@@ -147,12 +153,22 @@ def no_response():
 
 @app.route('/submit_correct_info', methods=['POST'])
 def submit_correct_info():
+
+    client = initialize_gspread_client()
+
+    info = request.form['info']
+    org = request.form['org']
     sheet_name = request.form['sheet']
     recipient_email = request.form['recipient_email']
     correct_info = request.form['correct_info']
     date = datetime.now().strftime("%Y-%m-%d")
 
-    cur_sheet = get_sheet_by_name(sheet_name)
+    spreadsheet_key = get_key_by_org(org)
+    sheet = client.open_by_key(spreadsheet_key)
+
+    sheet_name = request.args.get('sheet', 'Sheet1')
+
+    cur_sheet = get_sheet_by_name(sheet, sheet_name)
 
     if not cur_sheet:
         return "Sheet not found", 400
@@ -160,10 +176,11 @@ def submit_correct_info():
     next_row = len(cur_sheet.col_values(2)) + 1
 
     try:
-        cur_sheet.update_cell(next_row, 1, 'no')
-        cur_sheet.update_cell(next_row, 2, recipient_email)
-        cur_sheet.update_cell(next_row, 3, date)
-        cur_sheet.update_cell(next_row, 4, correct_info)
+        cur_sheet.update_cell(next_row, 1, info)
+        cur_sheet.update_cell(next_row, 2, 'no')
+        cur_sheet.update_cell(next_row, 3, recipient_email)
+        cur_sheet.update_cell(next_row, 4, date)
+        cur_sheet.update_cell(next_row, 5, correct_info)
         return "Thank you for your response!"
     except Exception as e:
         app.logger.error(f"Failed to record response: {e}")

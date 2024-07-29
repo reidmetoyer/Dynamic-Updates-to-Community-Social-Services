@@ -49,7 +49,7 @@ spreadsheet_key = "x"
 #ST MARGARET's HOUSE
 def notif_smh():
     #smh-specific variables
-    org = "smh"
+    org = "olotr"
     #recipient = ""
     urls = ["https://stmargaretshouse.org/contact-us/", "https://stmargaretshouse.org/events/"]
     file_paths = ["file1.pdf", "file2.pdf"]
@@ -216,12 +216,14 @@ def construct_email(org, recipient, info):
         <li>
             <strong>{key}:</strong> {value} <br>
             <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/track_click" method="get" style="display: inline;">
+                <input type="hidden" name="info" value="{value}">
                 <input type="hidden" name="org" value="{org}">
                 <input type="hidden" name="sheet" value="{key}">
                 <input type="hidden" name="recipient_email" value="{recipient}">
                 <button type="submit" name="answer" value="yes">Yes</button>
             </form>
             <form action="https://email-notifs-qbwaylvbsa-uc.a.run.app/no_response" method="get" style="display: inline;">
+                <input type="hidden" name="info" value="{value}">
                 <input type="hidden" name="org" value="{org}">
                 <input type="hidden" name="sheet" value="{key}">
                 <input type="hidden" name="recipient_email" value="{recipient}">

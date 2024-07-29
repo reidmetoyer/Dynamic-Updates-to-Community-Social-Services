@@ -141,7 +141,7 @@ def no_response():
         <form action="/submit_correct_info" method="post">
             <input type="hidden" name="info" value="{info}">
             <input type="hidden" name="org" value="{org}">
-            <input type="hidden" name="sheet" value="{sheet_name}">
+            <input type="hidden" name="sheet_name" value="{sheet_name}">
             <input type="hidden" name="recipient_email" value="{recipient_email}">
             <label for="correct_info">Please provide the correct information:</label>
             <textarea id="correct_info" name="correct_info" rows="4" cols="50"></textarea>

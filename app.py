@@ -130,6 +130,7 @@ def no_response():
     org = request.args.get('org')
     sheet = request.args.get('sheet')
     recipient_email = request.args.get('recipient_email')
+    sheet = request.args.get('sheet')
     
     html_content = f"""
     <html>

@@ -49,7 +49,7 @@ spreadsheet_key = "x"
 #ST MARGARET's HOUSE
 def notif_smh():
     #smh-specific variables
-    org = "olotr"
+    org = "smh"
     #recipient = ""
     urls = ["https://stmargaretshouse.org/contact-us/", "https://stmargaretshouse.org/events/"]
     file_paths = ["file1.pdf", "file2.pdf"]

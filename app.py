@@ -128,9 +128,9 @@ def no_response():
     
     info = request.args.get('info')
     org = request.args.get('org')
-    sheet = request.args.get('sheet')
+    sheet_name = request.args.get('sheet')
     recipient_email = request.args.get('recipient_email')
-    sheet = request.args.get('sheet')
+    
     
     html_content = f"""
     <html>
@@ -141,7 +141,7 @@ def no_response():
         <form action="/submit_correct_info" method="post">
             <input type="hidden" name="info" value="{info}">
             <input type="hidden" name="org" value="{org}">
-            <input type="hidden" name="sheet" value="{sheet}">
+            <input type="hidden" name="sheet" value="{sheet_name}">
             <input type="hidden" name="recipient_email" value="{recipient_email}">
             <label for="correct_info">Please provide the correct information:</label>
             <textarea id="correct_info" name="correct_info" rows="4" cols="50"></textarea>
@@ -159,7 +159,7 @@ def submit_correct_info():
 
     info = request.form['info']
     org = request.form['org']
-    sheet_name = request.form['sheet']
+    sheet_name = request.form['sheet_name']
     recipient_email = request.form['recipient_email']
     correct_info = request.form['correct_info']
     date = datetime.now().strftime("%Y-%m-%d")
@@ -167,7 +167,7 @@ def submit_correct_info():
     spreadsheet_key = get_key_by_org(org)
     sheet = client.open_by_key(spreadsheet_key)
 
-    sheet_name = request.args.get('sheet', 'Sheet1')
+    #sheet_name = request.args.get('sheet', 'Sheet1')
 
     cur_sheet = get_sheet_by_name(sheet, sheet_name)
 

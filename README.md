@@ -1,11 +1,182 @@
-# Dynamic-Updates-to-Community-Social-Services
-This program is an automatable program that observes multiple websites belonging to community social services in South Bend, IN and gathers information from the websites. That information is then formatted into a questionnaire style email that is sent to employees of each organization to check if the information is up to date or not. The responses from each employee are then stored in a google spreadsheet; each organization has their own spreadsheet. This README will explain the multiple parts that fit together for this program to work.
 
-To run the program: First, we need to build a container of the project on Google Cloud Run, and then deploy the project. This is easy and once deployed, it will run indefinitely until app.py needs to be updated. Next, run email_notifs.py, and that's it. Ultimately, we'll have email_notifs.py run as a job connected to the project on Google Cloud Run, so it will all be automatic and will only need to be updated when we add more organizations or websites to the project. 
+# Program Overview
 
-Setup information. This project has a lot of parts working together, so let's go through and explain how they fit together. First, this project utilizes the OpenAI API, and thus there is an OpenAI API key that is required to run email_notifs.py. Additionally, there is a file called credentials.json which holds a secret that cannot be passed to git. This secret key is tracked in my Google Cloud Run service account (using Secret Manager) created for this project, so it should be accessible by the program at all times. 
+This program automates the process of gathering information from websites of community social services in South Bend, IN, and sending out questionnaires to verify the accuracy of that information. It consists of a series of scripts that work together to collect data, send emails, record responses, and update Google spreadsheets. These spreadsheets are accessible to organizations and the public via a dynamically updating webpage.
 
-There are also a few Google Spreadsheets used in the project for storing information from the employee responses. Each one has its own unique spreadsheet key which is accessed via a get_org_sheet() function. Each spreadsheet also requires editing access by the Google Service Account, so when adding new organizations, remember to create a new spreadsheet for the organization, add a new organization variable to the code, add the spreadsheet key, and add the Google Service Account Email (found in credentials.json) editing access to the spreadsheet.
+----------
+
+## Table of Contents
+
+1.  [Setup Instructions](#setup-instructions)
+    -   [Backend Setup](#backend-setup)
+    -   [Required APIs](#required-apis)
+    -   [Required Packages](#required-packages)
+    -   [Google Spreadsheets](#google-spreadsheets)
+    -   [Code Variables](#code-variables)
+2.  [Program Components](#program-components)
+    -   [app.py](#app-py)
+    -   [Email_notifs.py](#email-notifs-py)
+    -   [scrape_events.py](#scrape-events-py)
+    -   [info_extract.py](#info-extract-py)
+    -   [Dockerfile](#dockerfile)
+    -   [Requirements.txt](#requirements-txt)
+    -   [.dockerignore / .gitignore](#dockerignore-gitignore)
+    -   [env](#env)
+    -   [README.md](#readme-md)
+    -   [Credentials.json](#credentials-json)
+3.  [Adding New Organizations](#adding-new-organizations)
+    -   [Notification Functions](#notification-functions)
+    -   [Google Spreadsheets](#google-spreadsheets)
+    -   [Updating App Scripts](#updating-app-scripts)
+4.  [Testing and Deployment](#testing-and-deployment)
+5.  [Maintenance](#maintenance)
+6.  [How the Program Works](#how-the-program-works)
+
+----------
+
+## Setup Instructions
+
+### Backend Setup
+
+1.  **Credentials.json Secret:**
+    -   This secret is specific to a service account created with `rmetoye2@nd.edu`.
+    -   If this email is terminated, create a new service account and rebuild/redeploy the app with the new account.
+    -   Create a new secret using the Secret Manager with the updated `Credentials.json` file.
+
+### Required APIs
+
+-   **Sheets API**
+-   **Secret Manager API**
+-   **Cloud Run Admin API**
+-  **OpenAI API**
+
+### Required Packages
+- **openai**
+- **dotenv**
+- **email.message**
+- **os**
+- **pathlib**
+- **pdfkit**
+- **PyPDF2**
+- **ssl**
+- **smtplib**
+- **email.mime.multipart**
+- **email.mime.text**
+- **flask**
+- **oauth2client.service_account**
+- **google.cloud**
 
 
-How does the program actually work? When you deploy the project on Google Cloud Run, app.py is ran. This starts a Flask application running on port 8080. Then, by running email_notifs.py, we gather information from the websites and send out the questionnaire emails. These emails we send contain html buttons that send http responses to the aforementioned Flask app, allowing us to receive information and then send that information to the google spreadsheets. We take the immediate responses like 'yes/no' as well as the responder's email, the date the response was made, and in the case the answer was 'no', we also prompt the recipient to provide us with the correct information, which we then store as well.
+### Google Spreadsheets
+
+-   Stored in the MetoyerLab shared drive.
+-   If new organizations are added, new spreadsheets must be created.
+-   New spreadsheet keys must be added to the code and app scripts
+- Ensure new spreadsheets are formatted the exact same as old spreadsheets to ensure app scripts run consistently
+
+### Code Variables
+
+-   The code uses a list of variables for different organizations (e.g., St Margarets House, Our Lady of the Road, the Food Bank, Center for the Homeless).
+-   This includes notification methods, email formats, and separate Google spreadsheets for each organization.
+-   To scale the program, new variables must be added for each organization.
+-   Similar variable lists appear in the app scripts, and must be updated as well
+
+----------
+
+## Program Components
+
+### app.py
+
+-   Runs the Flask application and handles all responses via HTTP
+
+### Email_notifs.py
+
+-   Inspects websites, sends emails, and records responses in tandem with `app.py`.
+
+### scrape_events.py
+
+-   Used by `Email_notifs.py` for scraping event data from websites.
+
+### info_extract.py
+
+-   Used by `Email_notifs.py` for extracting information from websites using OpenAI API (alterations to prompts should be done here)
+
+### Dockerfile
+
+-   Required for Google Cloud Run build.
+
+### Requirements.txt
+
+-   Lists dependencies required for Google Cloud Run build.
+
+### .dockerignore / .gitignore
+
+-   Files to ignore for Docker and Git.
+
+### env
+
+-   Environment variables file.
+
+### README.md
+
+-   Documentation file.
+
+### Credentials.json
+
+-   Not required for Google Cloud Run build but stored with the program if necessary
+
+----------
+
+## Adding New Organizations
+
+### Notification Functions
+
+1.  Replicate existing notification methods.
+2.  Tailor the new function to the specific needs of the new organization.
+
+### Google Spreadsheets
+
+1.  Follow the structure used for existing organizations.
+2.  Store the new spreadsheets in the MetoyerLab shared drive.
+
+### Updating App Scripts
+
+1.  Add the new organization as variables to each part of the code.
+2.  Ensure all references to organizations in the code are updated to include the new organization.
+3.  Check for consistency and accuracy to avoid errors.
+
+----------
+
+## Testing and Deployment
+
+### Testing
+
+1.  Thoroughly test each new addition to ensure it works seamlessly with the existing setup.
+2.  Verify that emails are sent correctly, responses are recorded, and data is accurately updated in the Google spreadsheets.
+
+### Deployment
+
+1.  Ensure `Dockerfile`, `Requirements.txt`, and `.dockerignore` are correctly configured.
+2. Navigate to Google Cloud Run.
+3. Click on the service (email_notifs).
+4. Click 'Edit and Deploy New Revision' and complete the deployment.
+5.  Verify that the environment variables and APIs are correctly set up.
+
+----------
+
+## Maintenance
+
+-   Regularly update `Credentials.json` and other secrets as needed.
+-   Monitor the performance and scalability of the program.
+-   Maintain the shared Google spreadsheets and ensure data integrity.
+
+----------
+
+## How the Program Works
+
+1.  **Deployment**: Deploy the project on Google Cloud Run, which starts the Flask application (`app.py`).
+2.  **Running the Program**: Run `email_notifs.py` to gather information from the websites and send out questionnaire emails.
+3.  **Email Responses**: The emails contain HTML buttons that send HTTP responses to the Flask app, allowing it to record the information in Google spreadsheets.
+4.  **Data Storage**: The responses (e.g., 'yes/no', the responder's email, the date, and any updated information) are stored in the respective Google spreadsheets.
+
+Ultimately, `email_notifs.py` will run automatically as a recurring job connected with the Google Cloud Run Service. This functionality will be added later.

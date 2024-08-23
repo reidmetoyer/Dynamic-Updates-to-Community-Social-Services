@@ -35,6 +35,7 @@ load_dotenv(dotenv_path=env_path)
 client = OpenAI()
 
 
+#some variables for sending emails
 sender = "rmetoye2@nd.edu"
 recipient = "reid.metoyer@gmail.com"
 email_password = "bofw ucqi mvis sskp"
@@ -51,8 +52,8 @@ def notif_smh():
     #smh-specific variables
     org = "smh"
     #recipient = ""
-    urls = ["https://stmargaretshouse.org/contact-us/", "https://stmargaretshouse.org/events/"]
-    file_paths = ["file1.pdf", "file2.pdf"]
+    urls = ["https://stmargaretshouse.org/contact-us/", "https://stmargaretshouse.org/events/", "https://stmargaretshouse.org/services-programs/"]
+    file_paths = ["file1.pdf", "file2.pdf", "file3.pdf"]
 
     #notification logic
     print("notifying st margarets house")
@@ -61,9 +62,13 @@ def notif_smh():
     #set_custom_env_var(spreadsheet_key)
     #get_sheet_key()
     pdf_download(urls, file_paths, output_pdf)
+
     info = get_info(output_pdf)
+
     send_email(org, recipient, info)
+
     file_paths.append(output_pdf)
+    
     delete_pdfs(file_paths)
 
 
@@ -79,11 +84,16 @@ def notif_olotr():
     #notification logic
     print("notifying our lady of the road")
     output_pdf = "merged_output.pdf"
-    set_sheet_key(org)
+    spreadsheet_key = set_sheet_key(org)
+    
     pdf_download(urls, file_paths, output_pdf)
+
     info = get_info(output_pdf)
+
     send_email(org, recipient, info)
+
     file_paths.append(output_pdf)
+
     delete_pdfs(file_paths)
 
 
@@ -141,6 +151,7 @@ def set_sheet_key(org):
             spreadsheet_key = "1NzOlYVwSoTyl2_3LbcXAeHtXqXr11iFzvNqXbiLbWDU"
     return spreadsheet_key
 
+#no longer required
 def set_custom_env_var(spreadsheet_key):
     print("setting GAC")
     print("sheet key is: ", spreadsheet_key)
@@ -233,7 +244,9 @@ def construct_email(org, recipient, info):
         """
     body += """
     </ul>"""
-    if org == 'smh':
+
+    
+    if org == 'h':
         body+= """<br>
         <ul>"""
         body += """<strong>Are the following events UPCOMING events?</strong>"""
@@ -263,6 +276,8 @@ def construct_email(org, recipient, info):
 
     return body
 
+
+#sends an email to recipient
 def send_email(org, recipient, info):
 
 
@@ -315,3 +330,4 @@ if __name__ == "__main__":
 """
 
 notif_smh()
+#notif_olotr()

@@ -19,8 +19,11 @@ from the page. Please provide the following details:
 - facebook: organization facebook tag
 - instagram: organization instagram handle
 - hours of operation: organization hours of operation
+- services: [a list of services the organization provides; search for services such as transportation, beds, showers, etc]
+- resources: [a list of resources the organization provides; search for resources such as clothing, food, hygeine products, etc]
 
-If you are unable to find information for any of the keys provided, please make the value "n/a".
+Try to keep the list items in services and resources to 1 or 2 words maximum, and if possible, just use 1 word. For instance, instead of 'continental breakfast',
+use 'breakfast'. If you are unable to find information for any of the keys provided, please make the value "n/a".
 For example:
 {
     "phone": "574-234-7795",
@@ -28,7 +31,9 @@ For example:
     "address": "117 N. Lafayette Blvd, South Bend, IN 46601",
     "facebook": "facebook.com/stmargaretshouse1",
     "instagram": "n/a",
-    "hours of operation": "n/a"
+    "hours of operation": "n/a",
+    "services": [showers, breakfast, computer access],
+    "resources": [clothing, toiletries]
 }
 Return this dictionary as a string, NOT a code block. Do not include any other text in the response other than the dictionary.
 """

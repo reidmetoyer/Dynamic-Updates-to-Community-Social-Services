@@ -14,17 +14,17 @@ def scrape_smh():
     if response.status_code != 200:
         print(f"Failed to retrieve the web page. Status code: {response.status_code}")
     else:
-
+        print("scraping page")
         soup = BeautifulSoup(response.content, 'html.parser')
-
+     
 
         events_divs = soup.find_all('div', class_='elementor-element elementor-element-ac9d149 elementor-widget elementor-widget-text-editor')
-
+    
 
         for event_div in events_divs:
             container = event_div.find('div', class_='elementor-widget-container')
             if container:
-
+                print("retrieved container")
                 h4_elements = container.find_all('h4')
                 h5_elements = container.find_all('h5')
                 p_elements = container.find_all('p')

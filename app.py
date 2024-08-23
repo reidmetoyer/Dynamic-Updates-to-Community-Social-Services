@@ -9,13 +9,13 @@ import json
 from datetime import datetime
 #from email_notifs import get_sheet_key
 
-
+#environment variables
 load_dotenv()
-
+#start application
 app = Flask(__name__)
 
 
-
+#setting up secret variables and retrieving secrets
 secret_name = os.getenv("SECRET_NAME")
 project_id = os.getenv("PROJECT_ID")
 
@@ -33,9 +33,11 @@ credentials_path="credentials.json"
 with open(credentials_path, "w") as f:
     f.write(secret_data)
 
-#TRY THIS FRIDAY
+
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath(credentials_path)
-#TRY THIS FRIDAY
+
+
+#initializes google spreadsheet client
 def initialize_gspread_client():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
@@ -48,7 +50,7 @@ def initialize_gspread_client():
     #sheet = client.open_by_key(spreadsheet_key)
 
 
-
+#opens a google worksheet based on the sheet_name passed to this function from the HTML buttons in email_notifs
 def get_sheet_by_name(sheet, sheet_name):
     try:
         cur_sheet = sheet.worksheet(sheet_name)
@@ -57,6 +59,8 @@ def get_sheet_by_name(sheet, sheet_name):
         app.logger.error(f"Sheet '{sheet_name}' not found.")
         return None
 
+
+#not required but present
 def get_custom_env_var():
     keyclient = secretmanager.SecretManagerServiceClient()
     project_id = os.getenv('PROJECT_ID')
@@ -67,6 +71,8 @@ def get_custom_env_var():
     spreadsheet_key = response.payload.data.decode('UTF-8')
     return spreadsheet_key
 
+
+#self explanatory; 'org' is found in the http response from the html buttons
 def get_key_by_org(org):
     if org == 'smh':
             spreadsheet_key = "1nc4ZbHfiJyCkXNuUe_WhsMVTNfrwoYaPcGLH5JE2Xiw"
@@ -78,6 +84,8 @@ def get_key_by_org(org):
             spreadsheet_key = "1NzOlYVwSoTyl2_3LbcXAeHtXqXr11iFzvNqXbiLbWDU"
     return spreadsheet_key
 
+
+#app route for when 'yes' button is pressed
 @app.route('/track_click')
 def track_click():
     #spreadsheet_key = get_custom_env_var()
@@ -123,6 +131,7 @@ def track_click():
     return "Missing answer", 400
 
 
+#app route for when 'no' button is pressed
 @app.route('/no_response')
 def no_response():
     
@@ -152,6 +161,7 @@ def no_response():
     """
     return html_content
 
+#app route for when user submits correct info after 'no' is pressed
 @app.route('/submit_correct_info', methods=['POST'])
 def submit_correct_info():
 
@@ -162,7 +172,7 @@ def submit_correct_info():
     sheet_name = request.form['sheet_name']
     recipient_email = request.form['recipient_email']
     correct_info = request.form['correct_info']
-    date = datetime.now().strftime("%Y-%m-%d")
+    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     spreadsheet_key = get_key_by_org(org)
     sheet = client.open_by_key(spreadsheet_key)
@@ -221,6 +231,7 @@ def test_google_sheets():
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
+#runs application
 if __name__ == "__main__":
     print("creating port...")
     port = int(os.getenv('PORT', 8080))

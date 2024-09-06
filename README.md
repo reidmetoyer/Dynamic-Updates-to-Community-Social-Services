@@ -1,4 +1,3 @@
-
 # Program Overview
 
 This program automates the process of gathering information from websites of community social services in South Bend, IN, and sending out questionnaires to verify the accuracy of that information. It consists of a series of scripts that work together to collect data, send emails, record responses, and update Google spreadsheets. These spreadsheets are accessible to organizations and the public via a dynamically updating webpage.

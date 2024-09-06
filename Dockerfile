@@ -21,7 +21,7 @@ EXPOSE 8080
 #define environment variable
 ENV PORT=8080
 ENV GOOGLE_CLOUD_PROJECT=email-notifs-429119
-#ENV GOOGLE_APPLICATION_CREDENTIALS=credentials.json
+ENV GOOGLE_APPLICATION_CREDENTIALS=credentials.json
 ENV SECRET_NAME=credentials
 ENV PROJECT_ID=email-notifs-429119
 

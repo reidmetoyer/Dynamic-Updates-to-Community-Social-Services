@@ -35,7 +35,7 @@ with open(credentials_path, "w") as f:
 
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath(credentials_path)
-
+print("google app creds set to:", os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
 
 #initializes google spreadsheet client
 def initialize_gspread_client():
